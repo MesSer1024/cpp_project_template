@@ -3,10 +3,10 @@
 workspace "CppTemplateSolutionName"
   language "C++"
   architecture "x64"   
-  location "local" -- where to place sln-files etc
-  targetdir "local/%{cfg.buildcfg}"
+  location "_local" -- where to place sln-files etc
+  targetdir "_local/%{cfg.buildcfg}"
   configurations { "Debug", "Release", "Final" }
-  flags { "C++14"}
+  cppdialect "C++17"
   platforms { "Static", "DLL" }
 
   -- setup the different build configurations
@@ -20,7 +20,7 @@ workspace "CppTemplateSolutionName"
 
    filter { "configurations:Debug" }
       defines { "DD_DEBUG", "DEBUG" }
-      flags { "Symbols"}
+      symbols "On"
 
    filter {"configurations:Release"}
       defines { "DD_RELEASE", "RELEASE" }
@@ -36,8 +36,8 @@ workspace "CppTemplateSolutionName"
 
 project "GoogleTest"
   kind "StaticLib"
-  files { "googletest/src/gtest-all.cc" }
-  includedirs { "googletest/include", "googletest" }
+  files { "_external/googletest/src/gtest-all.cc" }
+  includedirs { "_external/googletest/include", "_external/googletest" }
 
 project "TemplateLib"
   defines { "BUILD_EXPORT_TEMPLATE_MODULE"}
@@ -53,12 +53,12 @@ project "TemplateLib.Test"
   files { "template_lib/_Test/**" }
 
   links { "TemplateLib", "GoogleTest" }
-  includedirs { "template_lib/_Public", "template_lib", "googletest/include" }
+  includedirs { "template_lib/_Public", "template_lib", "_external/googletest/include" }
 
 project "template_main"
    kind "ConsoleApp"
    files { "template_main/**.h", "template_main/**.cpp" }
 
    links { "TemplateLib", "GoogleTest" }
-   includedirs { "template_lib/_Public", "googletest/include" }
+   includedirs { "template_lib/_Public", "_external/googletest/include" }
 

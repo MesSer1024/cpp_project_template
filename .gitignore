@@ -32,4 +32,4 @@
 *.app
 
 # output files
-local/*
+_local/*
