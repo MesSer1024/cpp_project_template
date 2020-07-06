@@ -34,10 +34,12 @@ workspace "CppTemplateSolutionName"
 
       -- Done with global project settings
 
-project "GoogleTest"
-  kind "StaticLib"
-  files { "_external/googletest/src/gtest-all.cc" }
-  includedirs { "_external/googletest/include", "_external/googletest" }
+group "External"
+  project "GoogleTest"
+    kind "StaticLib"
+    files { "_external/googletest/src/gtest-all.cc" }
+    includedirs { "_external/googletest/include", "_external/googletest" }
+group "" -- back to "default scope"
 
 project "TemplateLib"
   defines { "BUILD_EXPORT_TEMPLATE_MODULE"}
@@ -47,6 +49,7 @@ project "TemplateLib"
   includedirs { "template_lib/_Public", "template_lib" }
 
 -- each test project should be separate exe file ...
+group "Tests"
 project "TemplateLib.Test"
   defines { "BUILD_INTERNAL_ACCESS_TEMPLATE_MODULE"}
   kind "ConsoleApp"
@@ -54,6 +57,7 @@ project "TemplateLib.Test"
 
   links { "TemplateLib", "GoogleTest" }
   includedirs { "template_lib/_Public", "template_lib", "_external/googletest/include" }
+group "" -- back to "default scope"
 
 project "template_main"
    kind "ConsoleApp"
