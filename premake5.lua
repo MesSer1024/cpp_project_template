@@ -7,7 +7,8 @@ workspace "CppTemplateSolutionName"
   targetdir "_local/%{cfg.buildcfg}"
   configurations { "Debug", "Final" }
   cppdialect "C++17"
-  platforms { "Static", "DLL" }
+  platforms { "Static" , "DLL" }
+  --platforms { "Static" }
   warnings "Extra"
   disablewarnings { "4100" } -- unused parameter value (input to function)
 
@@ -31,35 +32,79 @@ workspace "CppTemplateSolutionName"
 
       -- Done with global project settings
 
-group "External"
+-- <UtilityFunctions>
+function DeclareProject(identifier, projectType)
+	project (identifier)
+	if projectType ~= nil then kind (projectType) end
+	
+	files { "source/" .. identifier .. "/**" }
+	includedirs { "source/" .. identifier, "source/" .. identifier .. "/Public"  }
+end
+
+function DeclareTestProject(identifier)
+	project (identifier)
+	kind "ConsoleApp"
+	
+	files { "source/" .. identifier .. "/**" }
+	includedirs { "source/" .. identifier, "ExternalLibs/googletest/include" }		
+	links { "GoogleTest" }
+end
+
+function AddOneDependency(name)
+	links { name }
+	includedirs { "source/" .. name .. "/Public" }
+end
+
+function AddDependency(...)
+   local arg = {...}
+   for i,v in ipairs(arg) do
+      AddOneDependency(v)
+   end
+end
+
+function UseOneProjectAsInternal(name)
+	links { name }
+	includedirs { "source/" .. name .. "/Public", "source/" .. name }
+end
+
+function UseProjectAsInternal(...)
+   local arg = {...}
+   for i,v in ipairs(arg) do
+      UseOneProjectAsInternal(v)
+   end
+end
+
+-- <ExternalProjects>
+group "_External"
   project "GoogleTest"
     kind "StaticLib"
-    files { "_external/googletest/src/gtest-all.cc" }
-    includedirs { "_external/googletest/include", "_external/googletest" }
-group "" -- back to "default scope"
+    files { "ExternalLibs/googletest/src/gtest-all.cc" }
+    includedirs { "ExternalLibs/googletest/include", "ExternalLibs/googletest" }
 
-project "TemplateLib"
-  defines { "BUILD_EXPORT_TEMPLATE_MODULE"}
-  files { "template_lib/**.h", "template_lib/**.cpp" }
-  removefiles { "template_lib/_Test/**" }
+group ""
+-- </ExternalProjects>
 
-  includedirs { "template_lib/_Public", "template_lib" }
+-- <LibraryProjects>
+group "Library"
+	DeclareProject("TemplateLib")
+	defines { "BUILD_EXPORT_TEMPLATE_MODULE" }
+	
+group "Library/Tests"
+	DeclareTestProject("TemplateLib.Test")
+	UseProjectAsInternal("TemplateLib")
+	defines { "BUILD_INTERNAL_ACCESS_TEMPLATE_MODULE" }
 
--- each test project should be separate exe file ...
-group "Tests"
-project "TemplateLib.Test"
-  defines { "BUILD_INTERNAL_ACCESS_TEMPLATE_MODULE"}
-  kind "ConsoleApp"
-  files { "template_lib/_Test/**" }
+group "" -- leave Library-group
+-- </LibraryProjects>
 
-  links { "TemplateLib", "GoogleTest" }
-  includedirs { "template_lib/_Public", "template_lib", "_external/googletest/include" }
-group "" -- back to "default scope"
+-- <TemplateMain>
+group "TemplateMain"
+	DeclareProject("Execution", "ConsoleApp")
+		targetname "MainFoo"
+		AddDependency("TemplateLib")
+		filter { "configurations: Debug" }
+			defines { "FAKE_LAG" }
+		filter {}
 
-project "template_main"
-   kind "ConsoleApp"
-   files { "template_main/**.h", "template_main/**.cpp" }
-
-   links { "TemplateLib", "GoogleTest" }
-   includedirs { "template_lib/_Public", "_external/googletest/include" }
-
+group ""
+-- </TemplateMain>
