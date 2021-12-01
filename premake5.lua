@@ -6,7 +6,7 @@ workspace "CppTemplateSolutionName"
   location "_local" -- where to place sln-files etc
   targetdir "_local/%{cfg.buildcfg}"
   configurations { "Debug", "Final" }
-  cppdialect "C++17"
+  cppdialect "C++20"
   platforms { "Static" , "DLL" }
   --platforms { "Static" }
   warnings "Extra"
