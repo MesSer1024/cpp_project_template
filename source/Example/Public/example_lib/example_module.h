@@ -26,7 +26,7 @@ namespace ddahlkvist
 #if defined(BUILD_EXAMPLE_INTERNAL_ACCESS) || defined(BUILD_EXAMPLE_EXPORT)
 #define EXAMPLE_INTERNAL EXAMPLE_PUBLIC
 #else
-#define EXAMPLE_INTERNAL
+#define EXAMPLE_INTERNAL private: //[error diagnostics] since I'm primarily using this keyword for class functions "private:" will provide best error diagnostics inside VS since it showcases the function trying to invoke this method
 #endif
 
 }

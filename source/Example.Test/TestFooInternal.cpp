@@ -22,8 +22,10 @@ namespace ddahlkvist
 
 	TEST_F(FooInternalFixture, canAccessInternalFunction)
 	{
-		FooInternal foo;
-		ASSERT_EQ(foo.getIdentifier(), 42u);
+		FooMixed foo;
+		ASSERT_EQ(foo.getInternal(), 42u);
+		//ASSERT_EQ(foo.getNothing(), 42u); // this is not exported inside dll
+		ASSERT_EQ(foo.getPublic(), 42u);
 	}
 
 }
