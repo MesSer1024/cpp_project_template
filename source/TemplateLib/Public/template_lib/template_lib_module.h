@@ -30,10 +30,4 @@ namespace ddahlkvist
 #define TEMPLATE_INTERNAL
 #endif
 
-namespace template_lib_module
-{
-void bind(void* data);
-unsigned int getProjectId();
-}
-
 }
