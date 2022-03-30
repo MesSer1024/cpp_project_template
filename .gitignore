@@ -31,5 +31,8 @@
 *.out
 *.app
 
+# Visual Studio
+.vs/**
+
 # output files
-_local/*
+_local/**
