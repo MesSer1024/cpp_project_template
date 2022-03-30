@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <foo/Foo.h>
+#include <foo/FooInternal.h>
 
 namespace ddahlkvist
 {

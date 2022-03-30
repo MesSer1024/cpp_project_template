@@ -1,4 +1,4 @@
-#include "Foo.h"
+#include "FooInternal.h"
 
 namespace ddahlkvist
 {
