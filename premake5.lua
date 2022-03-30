@@ -100,8 +100,3 @@ group "" -- leave Library-group
 DeclareProject("Execution", "ConsoleApp")
 	targetname "MainFoo"
 	AddDependency("Example")
-	filter { "configurations: Debug" }
-		defines { "THIS_IS_DEBUG" }
-	filter { "configurations: Final"}
-		defines { "THIS_IS_FINAL" }
-
