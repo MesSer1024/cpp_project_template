@@ -1,6 +1,6 @@
 -- premake5.lua
 
-workspace "CppTemplateSolutionName"
+workspace "ExampleProject"
   language "C++"
   cppdialect "C++20"
   architecture "x64"   
@@ -8,7 +8,6 @@ workspace "CppTemplateSolutionName"
   targetdir "_local/%{cfg.buildcfg}"
   configurations { "Debug", "Final" }
   platforms { "Static" , "DLL" }
-  --platforms { "Static" }
   warnings "Extra"
   disablewarnings { "4100" } -- unused parameter value (input to function)
 
@@ -39,6 +38,7 @@ function DeclareProject(identifier, projectType)
 	
 	files { "source/" .. identifier .. "/**" }
 	includedirs { "source/" .. identifier, "source/" .. identifier .. "/Public"  }
+	defines("BUILD_" .. string.upper(identifier) .. "_EXPORT") -- example: BUILD_EXAMPLE_EXPORT
 end
 
 function DeclareTestProject(identifier)
@@ -65,6 +65,7 @@ end
 function UseOneProjectAsInternal(name)
 	links { name }
 	includedirs { "source/" .. name .. "/Public", "source/" .. name }
+	defines("BUILD_" .. string.upper(name) .. "_INTERNAL_ACCESS") -- example: BUILD_EXAMPLE_INTERNAL_ACCESS
 end
 
 function UseProjectAsInternal(...)
@@ -86,25 +87,21 @@ group ""
 
 -- <LibraryProjects>
 group "Library"
-	DeclareProject("TemplateLib")
-	defines { "BUILD_EXPORT_TEMPLATE_MODULE" }
+	DeclareProject("Example")
 	
 group "Library/Tests"
-	DeclareTestProject("TemplateLib.Test")
-	UseProjectAsInternal("TemplateLib")
-	defines { "BUILD_INTERNAL_ACCESS_TEMPLATE_MODULE" }
+	DeclareTestProject("Example.Test")
+	UseProjectAsInternal("Example")
 
 group "" -- leave Library-group
 -- </LibraryProjects>
 
--- <TemplateMain>
-group "TemplateMain"
-	DeclareProject("Execution", "ConsoleApp")
-		targetname "MainFoo"
-		AddDependency("TemplateLib")
-		filter { "configurations: Debug" }
-			defines { "FAKE_LAG" }
-		filter {}
 
-group ""
--- </TemplateMain>
+DeclareProject("Execution", "ConsoleApp")
+	targetname "MainFoo"
+	AddDependency("Example")
+	filter { "configurations: Debug" }
+		defines { "THIS_IS_DEBUG" }
+	filter { "configurations: Final"}
+		defines { "THIS_IS_FINAL" }
+

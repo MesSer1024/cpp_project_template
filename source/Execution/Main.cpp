@@ -1,4 +1,4 @@
-#include <template_lib/Library.h>
+#include <example_lib/Library.h>
 
 namespace ddahlkvist
 {

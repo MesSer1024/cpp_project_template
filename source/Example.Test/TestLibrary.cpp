@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include <template_lib/Types.h>
-#include <template_lib/Library.h>
+#include <example_lib/Types.h>
+#include <example_lib/Library.h>
 
 namespace ddahlkvist
 {
